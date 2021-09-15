@@ -1,6 +1,6 @@
 package stats
 
-import "github.com/fm2901/bank/pkg/types"
+import "github.com/fm2901/bank/v2/pkg/types"
 
 // Calculates avg sum of payments
 func Avg(payments []types.Payment) types.Money {
@@ -11,7 +11,9 @@ func Avg(payments []types.Payment) types.Money {
 	}
 
 	for _, payment := range payments {
-		allSum += payment.Amount
+		if payment.Status != types.StatusFail {
+			allSum += payment.Amount
+		}
 	}
 
 	avgSum := allSum / types.Money(len(payments))
@@ -24,9 +26,13 @@ func TotalInCategory(payments []types.Payment, category types.Category) types.Mo
 	allSum := types.Money(0)
 
 	for _, payment := range payments {
-		if payment.Category == category {
-			allSum += payment.Amount
+		if payment.Category != category {
+			continue
 		}
+		if payment.Status == types.StatusFail {
+			continue
+		}
+		allSum += payment.Amount
 	}
 
 	return allSum
