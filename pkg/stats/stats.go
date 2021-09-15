@@ -5,6 +5,7 @@ import "github.com/fm2901/bank/v2/pkg/types"
 // Calculates avg sum of payments
 func Avg(payments []types.Payment) types.Money {
 	allSum := types.Money(0)
+	allCount := types.Money(0)
 
 	if len(payments) < 1 {
 		return allSum
@@ -13,10 +14,15 @@ func Avg(payments []types.Payment) types.Money {
 	for _, payment := range payments {
 		if payment.Status != types.StatusFail {
 			allSum += payment.Amount
+			allCount += 1
 		}
 	}
 
-	avgSum := allSum / types.Money(len(payments))
+	if allCount < 1 {
+		return allSum
+	}
+
+	avgSum := allSum / allCount
 
 	return avgSum
 }
